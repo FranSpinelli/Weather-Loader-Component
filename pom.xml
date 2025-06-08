@@ -6,7 +6,7 @@
     <artifactId>weather-loader-component</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Weather-Loader-Component</name>
-    <description>Weather-Loader-Component</description>
+    <description>Componente encargado de obtener información del clima cada cierto tiempo y exponerla a traves de una API rest.</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
