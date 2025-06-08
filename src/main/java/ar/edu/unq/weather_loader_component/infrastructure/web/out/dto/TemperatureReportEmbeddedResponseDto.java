@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class CloudsDataEmbeddedDto {
+public class TemperatureReportEmbeddedResponseDto {
 
-    @JsonProperty("all")
-    private Integer cloudinessPercentage;
+    @JsonProperty("temp")
+    private Double weatherTemperature;
+
 }
