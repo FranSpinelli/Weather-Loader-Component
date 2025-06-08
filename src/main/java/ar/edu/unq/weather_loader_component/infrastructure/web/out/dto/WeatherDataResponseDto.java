@@ -9,19 +9,19 @@ import java.util.List;
 public class WeatherDataResponseDto {
 
     @JsonProperty("weather")
-    private List<GeneralWeatherDataEmbeddedResponseDto> generalData;
+    private List<GeneralWeatherDataEmbeddedResponseDto> generalWeatherDataEmbeddedResponseDtos;
 
     @JsonProperty("main")
-    private MainWeatherDataEmbeddedResponseDto mainWeatherData;
+    private MainWeatherDataEmbeddedResponseDto mainWeatherDataEmbeddedResponseDto;
 
     @JsonProperty("visibility")
-    private String visibilityDistanceMeters;
+    private Integer visibilityMeters;
 
     @JsonProperty("wind")
-    private WindDataEmbeddedResponseDto windData;
+    private WindDataEmbeddedResponseDto windDataEmbeddedResponseDto;
 
     @JsonProperty("clouds")
-    private CloudsDataEmbeddedDto cloudsData;
+    private CloudsDataEmbeddedDto cloudsDataEmbeddedResponseDto;
 
     @JsonProperty("name")
     private String cityName;

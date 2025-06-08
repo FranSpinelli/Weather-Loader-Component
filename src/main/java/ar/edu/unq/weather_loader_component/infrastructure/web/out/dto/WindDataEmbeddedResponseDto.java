@@ -13,5 +13,5 @@ public class WindDataEmbeddedResponseDto {
     private Double directionDegrees;
 
     @JsonProperty("gust")
-    private Double windGusts;
+    private Double windGustsSpeed;
 }

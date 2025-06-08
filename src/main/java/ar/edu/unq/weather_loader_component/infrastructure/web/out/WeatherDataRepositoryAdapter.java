@@ -1,12 +1,14 @@
 package ar.edu.unq.weather_loader_component.infrastructure.web.out;
 
+import ar.edu.unq.weather_loader_component.domain.model.*;
 import ar.edu.unq.weather_loader_component.domain.port.out.WeatherDataRepositoryPort;
-import ar.edu.unq.weather_loader_component.infrastructure.web.out.dto.WeatherDataResponseDto;
+import ar.edu.unq.weather_loader_component.infrastructure.web.out.dto.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @Component
 public class WeatherDataRepositoryAdapter implements WeatherDataRepositoryPort {
@@ -29,7 +31,7 @@ public class WeatherDataRepositoryAdapter implements WeatherDataRepositoryPort {
     }
 
     @Override
-    public WeatherDataResponseDto getCurrentWeatherData() {
+    public WeatherData getCurrentWeatherData() {
         URI weatherMapUri = UriComponentsBuilder.fromHttpUrl(WEATHER_MAP_URL)
                 .queryParam(LATITUDE_QUERY_PARAM, LATITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LONGITUDE_QUERY_PARAM, LONGITUDE_QUERY_PARAM_VALUE)
@@ -38,6 +40,45 @@ public class WeatherDataRepositoryAdapter implements WeatherDataRepositoryPort {
                 .queryParam(APP_ID_QUERY_PARAM, "${ar.edu.unq.weather.loader.component.weather.map.api.key}")
                 .build().toUri();
 
-        return restClient.get().uri(weatherMapUri).retrieve().body(WeatherDataResponseDto.class);
+        WeatherDataResponseDto weatherDataResponseDto = restClient.get().uri(weatherMapUri).retrieve().body(WeatherDataResponseDto.class);
+
+        return generateWeatherDataFrom(weatherDataResponseDto);
+    }
+
+    private WeatherData generateWeatherDataFrom(WeatherDataResponseDto weatherDataResponseDto) {
+        List<GeneralWeatherData> generalWeatherDataList = generateGeneralWeatherDataFrom(weatherDataResponseDto.getGeneralWeatherDataEmbeddedResponseDtos());
+        MainWeatherData mainWeatherData = generateMainWeatherDataFrom(weatherDataResponseDto.getMainWeatherDataEmbeddedResponseDto());
+        WindData windData = generateWindDataFrom(weatherDataResponseDto.getWindDataEmbeddedResponseDto());
+        CloudsData cloudsData = generateCloudsDataFrom(weatherDataResponseDto.getCloudsDataEmbeddedResponseDto());
+
+        return new WeatherData(generalWeatherDataList, mainWeatherData, weatherDataResponseDto.getVisibilityMeters(), windData, cloudsData, weatherDataResponseDto.getCityName());
+    }
+
+    private List<GeneralWeatherData> generateGeneralWeatherDataFrom(List<GeneralWeatherDataEmbeddedResponseDto> generalWeatherDataEmbeddedResponseDtos) {
+        return generalWeatherDataEmbeddedResponseDtos.stream()
+                .map(generalWeatherDataEmbeddedResponseDto -> new GeneralWeatherData(generalWeatherDataEmbeddedResponseDto.getGeneralWeatherDescription())).toList();
+    }
+
+    private MainWeatherData generateMainWeatherDataFrom(MainWeatherDataEmbeddedResponseDto mainWeatherDataEmbeddedResponseDto) {
+        return new MainWeatherData(
+                mainWeatherDataEmbeddedResponseDto.getTemperature(),
+                mainWeatherDataEmbeddedResponseDto.getFeelsLikeTemperature(),
+                mainWeatherDataEmbeddedResponseDto.getMinTemperatureInCelsius(),
+                mainWeatherDataEmbeddedResponseDto.getMaxTemperatureInCelsius(),
+                mainWeatherDataEmbeddedResponseDto.getPressure(),
+                mainWeatherDataEmbeddedResponseDto.getHumidity()
+        );
+    }
+
+    private WindData generateWindDataFrom(WindDataEmbeddedResponseDto windDataEmbeddedResponseDto) {
+        return new WindData(
+                windDataEmbeddedResponseDto.getWindSpeed(),
+                windDataEmbeddedResponseDto.getDirectionDegrees(),
+                windDataEmbeddedResponseDto.getWindGustsSpeed()
+        );
+    }
+
+    private CloudsData generateCloudsDataFrom(CloudsDataEmbeddedDto cloudsDataEmbeddedResponseDto) {
+        return new CloudsData(cloudsDataEmbeddedResponseDto.getCloudinessPercentage());
     }
 }

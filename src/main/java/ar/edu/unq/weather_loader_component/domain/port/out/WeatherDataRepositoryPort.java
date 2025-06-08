@@ -1,7 +1,7 @@
 package ar.edu.unq.weather_loader_component.domain.port.out;
 
-import ar.edu.unq.weather_loader_component.infrastructure.web.out.dto.WeatherDataResponseDto;
+import ar.edu.unq.weather_loader_component.domain.model.WeatherData;
 
 public interface WeatherDataRepositoryPort {
-    WeatherDataResponseDto getCurrentWeatherData();
+    WeatherData getCurrentWeatherData();
 }
