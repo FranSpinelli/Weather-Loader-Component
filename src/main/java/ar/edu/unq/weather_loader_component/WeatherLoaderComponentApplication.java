@@ -1,4 +1,4 @@
-package ar.edu.unq.weatherloadercomponent;
+package ar.edu.unq.weather_loader_component;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
