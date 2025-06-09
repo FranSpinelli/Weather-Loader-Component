@@ -18,6 +18,6 @@ public class PeriodOfTimeTemperatureReportResponseDto {
     @JsonProperty("period_start")
     private LocalDateTime periodStart;
 
-    @JsonProperty("period_start")
+    @JsonProperty("period_end")
     private LocalDateTime periodEnd;
 }

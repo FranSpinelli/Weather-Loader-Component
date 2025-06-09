@@ -30,19 +30,19 @@ public class TemperatureReportController {
 
     @GetMapping("/last-day")
     public ResponseEntity<PeriodOfTimeTemperatureReportResponseDto> getLastDayWeatherReport() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime oneWeekAgo = now.minusWeeks(1);
+        LocalDateTime now = LocalDateTime.now().plusHours(3);
+        LocalDateTime oneWeekAgo = now.minusWeeks(1).plusHours(3);
 
-        PeriodOfTimeTemperatureReport periodOfTimeTemperatureReport = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReport(now, oneWeekAgo);
+        PeriodOfTimeTemperatureReport periodOfTimeTemperatureReport = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReport(oneWeekAgo, now);
         return ResponseEntity.ok(generatePeriodOfTimeTemperatureReportResponseDtoFrom(periodOfTimeTemperatureReport));
     }
 
     @GetMapping("/last-week")
     public ResponseEntity<PeriodOfTimeTemperatureReportResponseDto> getLastWeekWeatherReport() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime oneDayAgo = now.minusDays(1);
+        LocalDateTime now = LocalDateTime.now().plusHours(3);
+        LocalDateTime oneDayAgo = now.minusDays(1).plusHours(3);
 
-        PeriodOfTimeTemperatureReport temperatureReport = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReport(now, oneDayAgo);
+        PeriodOfTimeTemperatureReport temperatureReport = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReport(oneDayAgo, now);
         return ResponseEntity.ok(generatePeriodOfTimeTemperatureReportResponseDtoFrom(temperatureReport));
     }
 

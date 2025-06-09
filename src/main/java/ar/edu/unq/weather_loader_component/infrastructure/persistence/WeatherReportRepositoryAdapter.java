@@ -44,7 +44,7 @@ public class WeatherReportRepositoryAdapter implements WeatherReportRepositoryPo
             return Optional.of(new WeatherReport(
                     weatherReportDocument.getTemperature(),
                     weatherReportDocument.getCityName(),
-                    weatherReportDocument.getTimestamp()
+                    weatherReportDocument.getTimestamp().minusHours(3)
             ));
         }else{
             return Optional.empty();
@@ -59,7 +59,7 @@ public class WeatherReportRepositoryAdapter implements WeatherReportRepositoryPo
                 new WeatherReport(
                         weatherReportDocument.getTemperature(),
                         weatherReportDocument.getCityName(),
-                        weatherReportDocument.getTimestamp()
+                        weatherReportDocument.getTimestamp().minusHours(3)
                 )
         ).toList();
     }
