@@ -3,12 +3,15 @@ package ar.edu.unq.weather_loader_component.infrastructure.web.out;
 import ar.edu.unq.weather_loader_component.domain.model.*;
 import ar.edu.unq.weather_loader_component.domain.port.out.CurrentWeatherReportRepositoryPort;
 import ar.edu.unq.weather_loader_component.infrastructure.web.out.dto.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+@Slf4j
 @Component
 public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherReportRepositoryPort {
 
@@ -24,22 +27,30 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
     private static final String APP_ID_QUERY_PARAM = "appid";
 
     private final RestClient restClient;
+    private final String appIdValue;
 
-    public CurrentWeatherReportRepositoryAdapter(RestClient restClient) {
+    public CurrentWeatherReportRepositoryAdapter(
+            RestClient restClient,
+            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.key}") String appIdValue
+    ) {
         this.restClient = restClient;
+        this.appIdValue = appIdValue;
     }
 
     @Override
     public WeatherReport getCurrentWeatherReport() {
-        URI weatherMapUri = UriComponentsBuilder.fromHttpUrl(WEATHER_MAP_URL)
+        URI openWeatherApiUri = UriComponentsBuilder.fromHttpUrl(WEATHER_MAP_URL)
                 .queryParam(LATITUDE_QUERY_PARAM, LATITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LONGITUDE_QUERY_PARAM, LONGITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LANGUAGE_QUERY_PARAM, LANGUAGE_QUERY_PARAM_VALUE)
                 .queryParam(UNITS_QUERY_PARAM, UNITS_QUERY_PARAM_VALUE)
-                .queryParam(APP_ID_QUERY_PARAM, "${ar.edu.unq.weather.loader.component.weather.map.api.key}")
+                .queryParam(APP_ID_QUERY_PARAM, appIdValue)
                 .build().toUri();
 
-        CurrentWeatherReportResponseDto currentWeatherReportResponseDto = restClient.get().uri(weatherMapUri).retrieve().body(CurrentWeatherReportResponseDto.class);
+        log.info("OpenWeatherApi Uri: {}.", openWeatherApiUri);
+
+        CurrentWeatherReportResponseDto currentWeatherReportResponseDto = restClient.get().uri(openWeatherApiUri).retrieve().body(CurrentWeatherReportResponseDto.class);
+        log.info("Current Weather Report obtained from OpenWeatherApi: {}.", currentWeatherReportResponseDto);
 
         return generateWeatherReportFrom(currentWeatherReportResponseDto);
     }
