@@ -60,7 +60,7 @@ public class WeatherReportRepositoryAdapter implements WeatherReportRepositoryPo
                 new WeatherReport(
                         weatherReportDocument.getTemperature(),
                         weatherReportDocument.getCityName(),
-                        weatherReportDocument.getTimestamp()//.minusHours(3)
+                        weatherReportDocument.getTimestamp()
                 )
         ).toList();
     }
