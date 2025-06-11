@@ -1,7 +1,6 @@
 package ar.edu.unq.weather_loader_component.application;
 
 import ar.edu.unq.weather_loader_component.application.exceptions.InformationNotAvailableException;
-import ar.edu.unq.weather_loader_component.domain.model.PeriodOfTimeTemperatureReport;
 import ar.edu.unq.weather_loader_component.domain.model.TemperatureReport;
 import ar.edu.unq.weather_loader_component.domain.model.WeatherReport;
 import ar.edu.unq.weather_loader_component.domain.port.in.TemperatureReportUseCasePort;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TemperatureReportUseCaseAdapter implements TemperatureReportUseCasePort {
@@ -33,16 +32,13 @@ public class TemperatureReportUseCaseAdapter implements TemperatureReportUseCase
     }
 
     @Override
-    public PeriodOfTimeTemperatureReport getPeriodOfTimeTemperatureReport(LocalDateTime startDate, LocalDateTime endDate) {
-        List<WeatherReport> periodOfTimeWeatherReport = weatherReportRepositoryPort.getPeriodOfTimeWeatherReport(startDate, endDate);
-
-        Double periodOfTimeAverageTemperature = periodOfTimeWeatherReport.stream().mapToDouble(WeatherReport::getTemperature).sum() / periodOfTimeWeatherReport.size();
-
-        return new PeriodOfTimeTemperatureReport(
-                periodOfTimeAverageTemperature,
-                periodOfTimeWeatherReport.get(0).getCityName(),
-                startDate,
-                endDate
-        );
+    public List<TemperatureReport> getPeriodOfTimeTemperatureReport(LocalDateTime startDate, LocalDateTime endDate) {
+        return weatherReportRepositoryPort.getPeriodOfTimeWeatherReport(startDate, endDate)
+                .stream()
+                .map(weatherReport -> new TemperatureReport(weatherReport.getTemperature(),
+                        weatherReport.getCityName(),
+                        weatherReport.getTimestamp()//.minusHours(3)
+                ))
+                .collect(Collectors.toList());
     }
 }
