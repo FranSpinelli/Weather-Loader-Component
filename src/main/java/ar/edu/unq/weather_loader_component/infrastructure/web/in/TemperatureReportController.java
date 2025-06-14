@@ -2,7 +2,8 @@ package ar.edu.unq.weather_loader_component.infrastructure.web.in;
 
 import ar.edu.unq.weather_loader_component.domain.model.TemperatureReport;
 import ar.edu.unq.weather_loader_component.domain.port.in.TemperatureReportUseCasePort;
-import ar.edu.unq.weather_loader_component.infrastructure.web.in.dto.CurrentTemperatureReportResponseDto;
+import ar.edu.unq.weather_loader_component.infrastructure.web.in.dto.TemperatureReportResponseDto;
+import ar.edu.unq.weather_loader_component.infrastructure.web.in.dto.PeriodOfTimeTemperatureReportResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/temperature/report")
@@ -24,32 +24,34 @@ public class TemperatureReportController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<CurrentTemperatureReportResponseDto> getCurrentWeatherReport() {
+    public ResponseEntity<TemperatureReportResponseDto> getCurrentTemperatureReport() {
         TemperatureReport temperatureReport = temperatureReportUseCasePort.getCurrentTemperatureReport();
         return ResponseEntity.ok(generateCurrentTemperatureReportResponseDtoFrom(temperatureReport));
     }
 
     @GetMapping("/filter-by")
-    public ResponseEntity<List<CurrentTemperatureReportResponseDto>> getLastDayWeatherReport(@RequestParam(name = "from") LocalDateTime from,
-                                                                                                  @RequestParam(name = "to") LocalDateTime to) {
-        var report = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReport(from, to);
-        return ResponseEntity.ok(generatePeriodOfTimeTemperatureReportResponseDtoFrom(report));
+    public ResponseEntity<PeriodOfTimeTemperatureReportResponseDto> getPeriodOfTimeTemperatureReports(@RequestParam(name = "from") LocalDateTime from,
+                                                                                                      @RequestParam(name = "to") LocalDateTime to) {
+        List<TemperatureReport> reports = temperatureReportUseCasePort.getPeriodOfTimeTemperatureReports(from, to);
+        return ResponseEntity.ok(generatePeriodOfTimeTemperatureReportResponseDtoFrom(reports, from, to));
     }
 
 
-    private CurrentTemperatureReportResponseDto generateCurrentTemperatureReportResponseDtoFrom(TemperatureReport temperatureReport) {
-        return new CurrentTemperatureReportResponseDto(
+    private TemperatureReportResponseDto generateCurrentTemperatureReportResponseDtoFrom(TemperatureReport temperatureReport) {
+        return new TemperatureReportResponseDto(
                 temperatureReport.getTemperature(),
                 temperatureReport.getCityName(),
                 temperatureReport.getTimestamp()
         );
     }
 
-    private List<CurrentTemperatureReportResponseDto> generatePeriodOfTimeTemperatureReportResponseDtoFrom(List<TemperatureReport> reports) {
-        return reports.stream().map(report->new CurrentTemperatureReportResponseDto(
+    private PeriodOfTimeTemperatureReportResponseDto generatePeriodOfTimeTemperatureReportResponseDtoFrom(List<TemperatureReport> reports, LocalDateTime from, LocalDateTime to) {
+        List<TemperatureReportResponseDto> temperatureReports = reports.stream().map(report->new TemperatureReportResponseDto(
                 report.getTemperature(),
                 report.getCityName(),
                 report.getTimestamp()
-        )).collect(Collectors.toList());
+        )).toList();
+
+        return new PeriodOfTimeTemperatureReportResponseDto(temperatureReports, from, to);
     }
 }

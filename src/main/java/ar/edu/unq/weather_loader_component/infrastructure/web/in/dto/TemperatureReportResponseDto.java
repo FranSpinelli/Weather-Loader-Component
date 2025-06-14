@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class CurrentTemperatureReportResponseDto {
+public class TemperatureReportResponseDto {
 
     private Double temperature;
 

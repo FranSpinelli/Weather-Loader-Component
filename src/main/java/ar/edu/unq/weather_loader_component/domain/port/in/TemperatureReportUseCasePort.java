@@ -9,6 +9,6 @@ public interface TemperatureReportUseCasePort {
 
     TemperatureReport getCurrentTemperatureReport();
 
-    List<TemperatureReport> getPeriodOfTimeTemperatureReport(LocalDateTime startDate, LocalDateTime endDate);
+    List<TemperatureReport> getPeriodOfTimeTemperatureReports(LocalDateTime startDate, LocalDateTime endDate);
 
 }

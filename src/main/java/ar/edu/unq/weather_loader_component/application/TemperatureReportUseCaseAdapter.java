@@ -32,12 +32,12 @@ public class TemperatureReportUseCaseAdapter implements TemperatureReportUseCase
     }
 
     @Override
-    public List<TemperatureReport> getPeriodOfTimeTemperatureReport(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<TemperatureReport> getPeriodOfTimeTemperatureReports(LocalDateTime startDate, LocalDateTime endDate) {
         return weatherReportRepositoryPort.getPeriodOfTimeWeatherReport(startDate, endDate)
                 .stream()
                 .map(weatherReport -> new TemperatureReport(weatherReport.getTemperature(),
                         weatherReport.getCityName(),
-                        weatherReport.getTimestamp()//.minusHours(3)
+                        weatherReport.getTimestamp()
                 ))
                 .collect(Collectors.toList());
     }
