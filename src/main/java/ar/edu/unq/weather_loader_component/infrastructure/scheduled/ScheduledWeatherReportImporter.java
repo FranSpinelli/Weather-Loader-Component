@@ -15,7 +15,7 @@ public class ScheduledWeatherReportImporter {
         this.importCurrentWeatherReportUseCasePort = importCurrentWeatherReportUseCasePort;
     }
 
-    @Scheduled(cron = "${ar.edu.unq.weather.loader.component.import.cron}")
+    @Scheduled(cron = "${ar.edu.unq.weather.loader.component.import.cron:0 */30 * ? * *}")
     public void importCurrentWeatherReport() {
         log.info("Executing Current Weather Report Import.");
         importCurrentWeatherReportUseCasePort.importCurrentWeatherReport();
