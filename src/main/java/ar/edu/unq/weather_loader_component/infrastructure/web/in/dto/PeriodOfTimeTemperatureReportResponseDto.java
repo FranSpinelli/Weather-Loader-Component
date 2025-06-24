@@ -5,19 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class PeriodOfTimeTemperatureReportResponseDto {
 
-    private Double temperature;
+    @JsonProperty("temperature_reports")
+    private List<TemperatureReportResponseDto> temperatureReports;
 
-    @JsonProperty("city_name")
-    private String cityName;
+    private LocalDateTime from;
 
-    @JsonProperty("period_start")
-    private LocalDateTime periodStart;
-
-    @JsonProperty("period_end")
-    private LocalDateTime periodEnd;
+    private LocalDateTime to;
 }

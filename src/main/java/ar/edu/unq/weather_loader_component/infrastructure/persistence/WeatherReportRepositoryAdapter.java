@@ -34,32 +34,32 @@ public class WeatherReportRepositoryAdapter implements WeatherReportRepositoryPo
 
     @Override
     public Optional<WeatherReport> getCurrentWeatherReport() {
-        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+        LocalDateTime currentLocalDateTime = LocalDateTime.now();
+        LocalDateTime threeHoursAgoLocalDateTime = currentLocalDateTime.minusHours(3);
 
-        Optional<WeatherReportDocument> weatherReportDocumentOptional = weatherReportMongoRepository.findTopByTimestampBetweenOrderByTimestampDesc(startOfDay, endOfDay);
+        List<WeatherReportDocument> weatherReportDocumentList = weatherReportMongoRepository.findByTimestampBetweenOrderByTimestampDesc(threeHoursAgoLocalDateTime, currentLocalDateTime);
 
-        if(weatherReportDocumentOptional.isPresent()) {
-            WeatherReportDocument weatherReportDocument = weatherReportDocumentOptional.get();
+        if(weatherReportDocumentList.isEmpty()) {
+            return Optional.empty();
+        }else{
+            WeatherReportDocument weatherReportDocument = weatherReportDocumentList.get(1);
             return Optional.of(new WeatherReport(
                     weatherReportDocument.getTemperature(),
                     weatherReportDocument.getCityName(),
-                    weatherReportDocument.getTimestamp().minusHours(3)
+                    weatherReportDocument.getTimestamp()
             ));
-        }else{
-            return Optional.empty();
         }
     }
 
     @Override
     public List<WeatherReport> getPeriodOfTimeWeatherReport(LocalDateTime startDate, LocalDateTime endDate) {
-        List<WeatherReportDocument>  weatherReportDocumentsOfGivenPeriod = weatherReportMongoRepository.findByTimestampBetween(startDate, endDate);
+        List<WeatherReportDocument>  weatherReportDocumentsOfGivenPeriod = weatherReportMongoRepository.findByTimestampBetweenOrderByTimestampDesc(startDate, endDate);
 
         return weatherReportDocumentsOfGivenPeriod.stream().map(weatherReportDocument ->
                 new WeatherReport(
                         weatherReportDocument.getTemperature(),
                         weatherReportDocument.getCityName(),
-                        weatherReportDocument.getTimestamp().minusHours(3)
+                        weatherReportDocument.getTimestamp()
                 )
         ).toList();
     }

@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface WeatherReportMongoRepository extends MongoRepository<WeatherReportDocument, String> {
 
-    List<WeatherReportDocument> findByTimestampBetween(LocalDateTime startDate, LocalDateTime endDate);
-
-    Optional<WeatherReportDocument> findTopByTimestampBetweenOrderByTimestampDesc(LocalDateTime attr0, LocalDateTime attr1);
+    List<WeatherReportDocument> findByTimestampBetweenOrderByTimestampDesc(LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 }
