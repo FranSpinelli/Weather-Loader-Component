@@ -47,7 +47,7 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
                 .queryParam(APP_ID_QUERY_PARAM, appIdValue)
                 .build().toUri();
 
-        log.info("OpenWeatherApi Uri: {}.", openWeatherApiUri);
+        log.info("OpenWeatherApi Uri: {}.", URISanitizerUtil.sanitize(openWeatherApiUri));
 
         CurrentWeatherReportResponseDto currentWeatherReportResponseDto = restClient.get().uri(openWeatherApiUri).retrieve().body(CurrentWeatherReportResponseDto.class);
         log.info("Current Weather Report obtained from OpenWeatherApi: {}.", currentWeatherReportResponseDto);
