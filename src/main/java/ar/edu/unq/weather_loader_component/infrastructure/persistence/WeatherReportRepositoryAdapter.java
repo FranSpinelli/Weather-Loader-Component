@@ -2,6 +2,7 @@ package ar.edu.unq.weather_loader_component.infrastructure.persistence;
 
 import ar.edu.unq.weather_loader_component.domain.model.WeatherReport;
 import ar.edu.unq.weather_loader_component.domain.port.out.WeatherReportRepositoryPort;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class WeatherReportRepositoryAdapter implements WeatherReportRepositoryPo
     }
 
     @Override
+    @Cacheable(value = "temperatureReportsCache", key = "#startDate.toString() + '-' + #endDate.toString()")
     public List<WeatherReport> getPeriodOfTimeWeatherReport(LocalDateTime startDate, LocalDateTime endDate) {
         List<WeatherReportDocument>  weatherReportDocumentsOfGivenPeriod = weatherReportMongoRepository.findByTimestampBetweenOrderByTimestampDesc(startDate, endDate);
 
