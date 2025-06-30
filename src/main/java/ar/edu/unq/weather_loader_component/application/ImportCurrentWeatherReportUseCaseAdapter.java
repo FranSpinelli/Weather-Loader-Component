@@ -7,6 +7,8 @@ import ar.edu.unq.weather_loader_component.domain.port.out.WeatherReportReposito
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class ImportCurrentWeatherReportUseCaseAdapter implements ImportCurrentWeatherReportUseCasePort {
@@ -26,9 +28,14 @@ public class ImportCurrentWeatherReportUseCaseAdapter implements ImportCurrentWe
     public void importCurrentWeatherReport() {
 
         log.info("Getting Current Weather Report from OpenWeatherApi.");
-        WeatherReport weatherReportResponseDto = currentWeatherReportRepositoryPort.getCurrentWeatherReport();
+        Optional<WeatherReport> weatherReportOptional = currentWeatherReportRepositoryPort.getCurrentWeatherReport();
 
-        log.info("Saving Current Weather Report to Database.");
-        weatherReportRepositoryPort.save(weatherReportResponseDto);
+        if(weatherReportOptional.isPresent()) {
+            log.info("Saving Current Weather Report to Database.");
+            weatherReportRepositoryPort.save(weatherReportOptional.get());
+        }else {
+            log.warn("No Current Weather Report was obtained from OpenWeatherApi.");
+        }
+
     }
 }

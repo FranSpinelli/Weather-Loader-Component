@@ -54,33 +54,42 @@
         </dependency>
 
         <!-- Micrometer Prometheus – para métricas -->
+
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!-- Actuator – para exponer métricas -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!--  Logback encoder – para logs en JSON (opcional, pero recomendable para Loki) -->
+
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>7.4</version>
         </dependency>
 
+        <!-- Resilience4j – para circuit breaker contra Open-Weather API -->
+
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot3</artifactId>
-            <version>2.2.0</version>
+            <version>2.3.0</version>
         </dependency>
+
+        <!-- Librería de aspectos de Spring, para que las annotations de Resilience4j funcionen correctamente -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+
         <!-- Para Spring Cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
