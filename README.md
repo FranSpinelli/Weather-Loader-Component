@@ -29,4 +29,5 @@ Se debe ejecutar el servicio con los siguientes valores
 - mongo.db: Nombre de la DB de mongo
 - ar.edu.unq.weather.loader.component.import.cron: Cronjob para parametrizar cada cuanto tiempo se desea ejecutar, por ej "0 */3 * ? * *"
 - ar.edu.unq.weather.loader.component.weather.map.api.key: Apikey de weather app
+- ar.edu.unq.weather.loader.component.weather.map.api.url: URL de weather app
 - LOG_PATH: Carpeta para los logs, debe ser la ruta incluyendo el `/` al final por ejemplo `/Obervability-System/logs/`
