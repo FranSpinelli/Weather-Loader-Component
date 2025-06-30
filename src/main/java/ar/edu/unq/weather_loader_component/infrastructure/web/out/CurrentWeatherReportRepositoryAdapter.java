@@ -17,7 +17,7 @@ import java.util.Optional;
 @Component
 public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherReportRepositoryPort {
 
-    private static final String WEATHER_MAP_URL = "https://api.openweathermap.org/data/2.5/weather";
+    //private static final String WEATHER_MAP_URL = "https://api.openweathermap.org/data/2.5/weather";
     private static final String LATITUDE_QUERY_PARAM = "lat";
     private static final String LATITUDE_QUERY_PARAM_VALUE = "-34.7303025";
     private static final String LONGITUDE_QUERY_PARAM = "lon";
@@ -30,19 +30,22 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
 
     private final RestClient restClient;
     private final String appIdValue;
+    private final String appUrl;
 
     public CurrentWeatherReportRepositoryAdapter(
             RestClient restClient,
-            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.key}") String appIdValue
+            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.key}") String appIdValue,
+            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.url:https://api.openweathermap.org/data/2.5/weather}") String appUrl
     ) {
         this.restClient = restClient;
         this.appIdValue = appIdValue;
+        this.appUrl = appUrl;
     }
 
     @Override
     @CircuitBreaker(name = "getCurrentWeatherReport", fallbackMethod = "getCurrentWeatherReportFallback")
     public Optional<WeatherReport> getCurrentWeatherReport() {
-        URI openWeatherApiUri = UriComponentsBuilder.fromHttpUrl(WEATHER_MAP_URL)
+        URI openWeatherApiUri = UriComponentsBuilder.fromHttpUrl(appUrl)
                 .queryParam(LATITUDE_QUERY_PARAM, LATITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LONGITUDE_QUERY_PARAM, LONGITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LANGUAGE_QUERY_PARAM, LANGUAGE_QUERY_PARAM_VALUE)
