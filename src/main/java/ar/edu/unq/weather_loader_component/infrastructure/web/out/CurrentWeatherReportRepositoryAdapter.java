@@ -35,7 +35,7 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
     public CurrentWeatherReportRepositoryAdapter(
             RestClient restClient,
             @Value("${ar.edu.unq.weather.loader.component.weather.map.api.key}") String appIdValue,
-            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.url}") String appUrl
+            @Value("${ar.edu.unq.weather.loader.component.weather.map.api.url:https://api.openweathermap.org/data/2.5/weather}") String appUrl
     ) {
         this.restClient = restClient;
         this.appIdValue = appIdValue;
