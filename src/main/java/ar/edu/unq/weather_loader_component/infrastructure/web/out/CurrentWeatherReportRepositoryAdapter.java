@@ -3,6 +3,7 @@ package ar.edu.unq.weather_loader_component.infrastructure.web.out;
 import ar.edu.unq.weather_loader_component.domain.model.*;
 import ar.edu.unq.weather_loader_component.domain.port.out.CurrentWeatherReportRepositoryPort;
 import ar.edu.unq.weather_loader_component.infrastructure.web.out.dto.*;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -38,7 +40,8 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
     }
 
     @Override
-    public WeatherReport getCurrentWeatherReport() {
+    @CircuitBreaker(name = "getCurrentWeatherReport", fallbackMethod = "getCurrentWeatherReportFallback")
+    public Optional<WeatherReport> getCurrentWeatherReport() {
         URI openWeatherApiUri = UriComponentsBuilder.fromHttpUrl(WEATHER_MAP_URL)
                 .queryParam(LATITUDE_QUERY_PARAM, LATITUDE_QUERY_PARAM_VALUE)
                 .queryParam(LONGITUDE_QUERY_PARAM, LONGITUDE_QUERY_PARAM_VALUE)
@@ -52,7 +55,7 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
         CurrentWeatherReportResponseDto currentWeatherReportResponseDto = restClient.get().uri(openWeatherApiUri).retrieve().body(CurrentWeatherReportResponseDto.class);
         log.info("Current Weather Report obtained from OpenWeatherApi: {}.", currentWeatherReportResponseDto);
 
-        return generateWeatherReportFrom(currentWeatherReportResponseDto);
+        return Optional.of(generateWeatherReportFrom(currentWeatherReportResponseDto));
     }
 
     private WeatherReport generateWeatherReportFrom(CurrentWeatherReportResponseDto currentWeatherReportResponseDto) {
@@ -60,5 +63,10 @@ public class CurrentWeatherReportRepositoryAdapter implements CurrentWeatherRepo
                 currentWeatherReportResponseDto.getTemperatureReportEmbeddedResponseDto().getWeatherTemperature(),
                 currentWeatherReportResponseDto.getCityName()
         );
+    }
+
+    public Optional<WeatherReport> getCurrentWeatherReportFallback(Throwable throwable) {
+        log.error("Circuit Breaker is OPEN due to an error while getting Current Weather Report from OpenWeatherAPI: {}.", throwable.getMessage());
+        return Optional.empty();
     }
 }
